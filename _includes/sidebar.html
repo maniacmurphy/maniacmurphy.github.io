@@ -1,8 +1,4 @@
 <div class="sidebar well">
-{{ site.description }}
-</div>
-
-<div class="sidebar well">
     <h1>Recent Posts</h1>
     <ul>
         {% for post in site.posts limit:5 %}
@@ -12,5 +8,10 @@
 </div>
 
 <div class="sidebar well">
-{% include links-list.html %}
+    <h1>Categories</h1>
+    <ul>
+        {% for category in site.tags %}
+          <li><a href="{{ site.baseurl}}{{ category }}">{{ category }}</a></li>
+        {% endfor %}
+    </ul>
 </div>
