@@ -9,9 +9,5 @@
 
 <div class="sidebar well">
     <h1>Categories</h1>
-    <ul>
-        {% for category in site.tags %}
-          <li><a href="{{ site.baseurl}}{{ category }}">{{ category }}</a></li>
-        {% endfor %}
-    </ul>
+        {{ site | tag_cloud }}
 </div>

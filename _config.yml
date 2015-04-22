@@ -1,6 +1,7 @@
 # Jekyll configuration
+gems: [jekyll/tagging]
 
-name: Automated Everything 
+name: Practical Automation 
 
 # url is currently only used only for the RSS feed in feed.xml
 url: http://maniacmurphy.github.io
@@ -11,11 +12,11 @@ url: http://maniacmurphy.github.io
 #     run it like so: jekyll serve --baseurl=''
 baseurl: ''
 
-# This can be '' to hide the Github nav button
 github: 'maniacmurphy'
+twitter: 'IcanScriptThat'
 
 # Set this to your UA-# value, or '' to disable the block completely
-gaaccount: 'test_gaaccount'
+gaaccount: ''
 
 # Set this to your disqus shortname to enable comments. Note that the 'comments'
 # setting below must also be true. Individual posts can override 'comments' to
@@ -24,7 +25,7 @@ disqus: ''
 comments: true
 
 permalink: /:year/:month/:title
-paginate: 3
+paginate: 10
 
 highlighter: pygments
 markdown: redcarpet
@@ -32,3 +33,6 @@ redcarpet:
   extensions: ["no_intra_emphasis", "fenced_code_blocks", "autolink", "tables", "with_toc_data"]
 
 exclude: ['README.md', 'LICENSE']
+
+tag_page_layout: tag_page
+tag_page_dir: tag
