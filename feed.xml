@@ -6,5 +6,14 @@
 		<link>http://practical-automation.com</link>
 		<atom:link href="http://practical-automation.com/feed.xml" rel="self" type="application/rss+xml" />
 		
+			<item>
+				<title>Introduction</title>
+				<description>&lt;p&gt;I am sure my story is no different than most of yall. I am a technology geek that has been blessed enough to make his hobby his career, or was it making my career my hobby? In either case, I have spent my career learning from those that have come before me and I feel that I am finally able to give back in some small way. I hope this blog will help ease those getting started with some of the amazing tools out there, and to start with I am going to help introduce you to what we are doing with the VMware Puppet modules. I will try and keep each post from going too into the weeds, but if I don&amp;#39;t explain things clearly or you have a request for me to cover a specific resource type feel free to reach out to me on &lt;a href=&quot;https://twitter.com/IcanScriptThat&quot;&gt;twitter&lt;/a&gt;.&lt;/p&gt;
+</description>
+				<pubDate>Wed, 22 Apr 2015 00:00:00 -0500</pubDate>
+				<link>/2015/04/Introduction</link>
+				<guid isPermaLink="true">http://practical-automation.com/2015/04/Introduction</guid>
+			</item>
+		
 	</channel>
 </rss>
