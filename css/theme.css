@@ -68,3 +68,19 @@ body {
 .author a {
     color: #ee4444;
 }
+
+.article {
+    font-size: 1.25em;
+}
+
+.article h6 {
+    font-size: .75em;
+}
+
+.article a {
+    color: #848484;
+}
+
+.article a:hover {
+    color: #3071a9;
+}

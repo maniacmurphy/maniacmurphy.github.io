@@ -7,8 +7,35 @@
 		<atom:link href="http://practical-automation.com/feed.xml" rel="self" type="application/rss+xml" />
 		
 			<item>
+				<title>Transports</title>
+				<description>&lt;p&gt;Before I got involved with the VMware puppet modules, I had only been using Puppet for a few months and I had only used it to manage the system the Puppet agent was running on. But the original team behind the VMware modules was trying to manage a system that didn&amp;#39;t run off local config files. They needed to hit a remote system where a local Puppet agent might not work, and so enter &amp;quot;Transports.&amp;quot; I won&amp;#39;t dive too deep into transports as there are already some posts that do that which
+I shall link below. But all the VMware modules to rely heavily on some type of transport, so I would be amiss in getting started with walking you through them without at least touching on transports.&lt;/p&gt;
+
+&lt;p&gt;So what makes a transport special? After all, I am sure that the VMware modules aren&amp;#39;t the only ones to attempt to manage a remote system via API or some other interface. An over simplication might be a logical representation of your target system, i.e hostname and credentials. In reality they are also the entity that executes your desired state.  For instance, the vCenter transport type would certainly hold the those details such as hostname and credentials, but when the provider needs
+to execute a command it will pass it to the target system via the transport resource within Puppet. What this gets you is the ability to make that initial connection once, and then send all communication through that channel. Depending on the target protocol, that could save you some decent cycles. Currently the VMware modules utilize three transports which I want to introduce you to.&lt;/p&gt;
+
+&lt;h3 id=&quot;ssh-transport&quot;&gt;&lt;strong&gt;SSH Transport&lt;/strong&gt;&lt;/h3&gt;
+
+&lt;p&gt;The SSH transport is utilized by the &lt;a href=&quot;https://github.com/vmware/vmware-vcsa&quot;&gt;vmware-vcsa&lt;/a&gt;. This module is focused on getting the VMware vCenter Service Appliance bootstrapped so the services are configured and running. The view an appliance is a black box and so one shouldn&amp;#39;t count on a puppet agent running local. It is for this reason the &lt;a href=&quot;https://github.com/vmware/vmware-vcsa&quot;&gt;vmware-vcsa&lt;/a&gt; module uses the SSH transport to send commands to the remote system to bring up the vmware services. &lt;/p&gt;
+
+&lt;h4 id=&quot;example&quot;&gt;&lt;strong&gt;Example&lt;/strong&gt;&lt;/h4&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;   transport { &amp;#39;resourcename&amp;#39;:
+     username =&amp;gt; &amp;#39;localuser&amp;#39;,
+     password =&amp;gt; &amp;#39;mypassword&amp;#39;,
+     server   =&amp;gt; &amp;#39;fqdn&amp;#39;,
+     # options  =&amp;gt; $ssh_options,
+   }
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
+				<pubDate>Thu, 23 Apr 2015 00:00:00 -0500</pubDate>
+				<link>/2015/04/Transports</link>
+				<guid isPermaLink="true">http://practical-automation.com/2015/04/Transports</guid>
+			</item>
+		
+			<item>
 				<title>Introduction</title>
 				<description>&lt;p&gt;I am sure my story is no different than most of yall. I am a technology geek that has been blessed enough to make his hobby his career, or was it making my career my hobby? In either case, I have spent my career learning from those that have come before me and I feel that I am finally able to give back in some small way. I hope this blog will help ease those getting started with some of the amazing tools out there, and to start with I am going to help introduce you to what we are doing with the VMware Puppet modules. I will try and keep each post from going too into the weeds, but if I don&amp;#39;t explain things clearly or you have a request for me to cover a specific resource type feel free to reach out to me on &lt;a href=&quot;https://twitter.com/IcanScriptThat&quot;&gt;twitter&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Yesterday, we updated the modules on the &lt;a href=&quot;https://forge.puppetlabs.com/vmware&quot;&gt;forge&lt;/a&gt;. This was long overdue and moving forward they will be kept updated.&lt;/p&gt;
 </description>
 				<pubDate>Wed, 22 Apr 2015 00:00:00 -0500</pubDate>
 				<link>/2015/04/Introduction</link>
