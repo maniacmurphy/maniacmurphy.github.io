@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Practical Automation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/theme.css" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="http://practical-automation.com/">Practical Automation</a>
+              </div>
+              <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="http://practical-automation.com/">Home</a></li>
+                    <li class="active"><a href="http://practical-automation.com/archive.html">Archive</a></li>
+                    <li class="active"><a href="http://practical-automation.com/about.html">About</a></li>
+                    <li class="active"><a href="http://practical-automation.com/feed.xml">RSS</a></li>
+                </ul>
+              </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container container-left">
+    <div class="row">
+        <div class="col-md-3 hidden-xs">
+            <div class="sidebar well">
+    <h1>Recent Posts</h1>
+    <ul>
+        
+          <li><a href="http://practical-automation.com/2015/04/Transports">Transports</a></li>
+        
+          <li><a href="http://practical-automation.com/2015/04/Introduction">Introduction</a></li>
+        
+    </ul>
+</div>
+
+<div class="sidebar well">
+    <h1>Categories</h1>
+        <a href="/tag/transports.html" class="set-5">transports</a> <a href="/tag/vcenter.html" class="set-5">vcenter</a> <a href="/tag/vcsa.html" class="set-5">vcsa</a> <a href="/tag/vshield.html" class="set-5">vshield</a>
+</div>
+
+        </div>
+        <div class="col-md-9">
+          <div class="article">
+            <div>
+                <h1>Transports</h1>
+                <h6 >Apr 29, 2015</h6>
+            
+            <div class="post-content">
+            <p>Before I got involved with the VMware puppet modules, I had only been using Puppet for a few months and I had only used it to manage the system the Puppet agent was running on. But the original team behind the VMware modules was trying to manage a system that didn&#39;t run off local config files. They needed to hit a remote system where a local Puppet agent might not work, and so enter &quot;Transports.&quot; I won&#39;t dive too deep into transports as there are already some posts that do that which
+I shall link below. But all the VMware modules to rely heavily on some type of transport, so I would be amiss in getting started with walking you through them without at least touching on transports.</p>
+
+<p>So what makes a transport special? After all, I am sure that the VMware modules aren&#39;t the only ones to attempt to manage a remote system via API or some other interface. An over simplication might be a logical representation of your target system, i.e hostname and credentials. In reality they are also the entity that executes your desired state.  For instance, the vSphere transport type would certainly hold the those details such as hostname and credentials, but when the provider needs
+to execute a command it will pass it to the target system via the transport resource within Puppet. What this gets you is the ability to make that initial connection once, and then send all communication through that channel. Depending on the target protocol, that could save you some decent cycles. Currently the VMware modules utilize three transports which I want to introduce you to.</p>
+
+<p><br></p>
+
+<h3 id="ssh-transport"><strong>SSH Transport</strong></h3>
+
+<p>The SSH transport is utilized by the <a href="https://github.com/vmware/vmware-vcsa">vmware-vcsa</a> module. This module is focused on getting the VMware vCenter Service Appliance bootstrapped so the services are configured and running. The view is that an appliance is a black box and so one shouldn&#39;t count on a puppet agent running local. It is for this reason the <a href="https://github.com/vmware/vmware-vcsa">vmware-vcsa</a> module uses the SSH transport to send commands to the remote system to bring up the vmware services. </p>
+
+<p>The options can be a hash consisting of additional command line parameters to pass to the ssh session.</p>
+
+<h4 id="example"><strong>Example</strong></h4>
+<div class="highlight"><pre><code class="language-text" data-lang="text">   transport { &#39;ssh&#39;:
+     username =&gt; &#39;localuser&#39;,
+     password =&gt; &#39;mypassword&#39;,
+     server   =&gt; &#39;fqdn&#39;,
+     # options  =&gt; $ssh_options,
+   }
+</code></pre></div>
+<p><br></p>
+
+<h3 id="vsphere-transport"><strong>vSphere Transport</strong></h3>
+
+<p>The vSphere trasnport is, as expected, utilized by the <a href="https://github.com/vmware/vmware-vcenter">vmware-vcenter</a> module. This interacts with the vSphere API to configure vCenter or ESX hosts. The options here can be a hash of additional options for the connection. The example below shows setting the API revision and the insecure option to allow for self-signed certificates.</p>
+
+<h4 id="example"><strong>Example</strong></h4>
+<div class="highlight"><pre><code class="language-text" data-lang="text">   transport { &#39;vcenter&#39;:
+     username =&gt; &#39;localuser&#39;,
+     password =&gt; &#39;mypassword&#39;,
+     server   =&gt; &#39;fqdn&#39;,
+     options  =&gt; {
+       &quot;insecure&quot; =&gt; true,
+       &quot;rev&quot; =&gt; &quot;5.1&quot;,
+     },
+   }
+</code></pre></div>
+<p><br></p>
+
+<h3 id="vshield-transport"><strong>vShield Transport</strong></h3>
+
+<p>Again, clearly the vShield transport is used by the <a href="https://github.com/vmware/vmware-vshield">vmware-vshield</a> module and it interacts with the vShield API. This transport does not have an options parameter</p>
+
+<h4 id="example"><strong>Example</strong></h4>
+<div class="highlight"><pre><code class="language-text" data-lang="text">   transport { &#39;vshield&#39;:
+     username =&gt; &#39;localuser&#39;,
+     password =&gt; &#39;mypassword&#39;,
+     server   =&gt; &#39;fqdn&#39;,
+   }
+</code></pre></div>
+<p><br></p>
+
+<h3 id="additional-references"><strong>Additional References</strong></h3>
+
+<ul>
+<li><a href="https://github.com/vmware/vmware-vmware_lib/blob/master/lib/puppet_x/puppetlabs/transport/ssh.rb">SSH Transport</a> : Review the code for the SSH transport</li>
+<li><a href="https://github.com/vmware/vmware-vcenter/blob/master/lib/puppet_x/puppetlabs/transport/vsphere.rb">vSphere Transport</a> : Review the code for the vSphere transport</li>
+<li><a href="https://github.com/vmware/vmware-vshield/blob/master/lib/puppet_x/puppetlabs/transport/vshield.rb">vShield Transport</a> : Review the code for the vShield transport</li>
+<li><a href="http://www.nanliu.me/blog/2013/02/27/puppet-managing-vcenter-and-vshield">Nan Liu</a> : See Nan Liu&#39;s original post on these modules and their transports</li>
+</ul>
+
+            </div>
+            
+            </div>
+          </div>
+          <div class="pagination">
+              
+              
+                <a class="btn btn-default" href="http://practical-automation.com/2015/04/Introduction" class="previous">Older Post</a>
+              
+</div>
+
+        </div>
+    </div>
+</div>
+
+
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12 footer navbar-inverse navbar-fixed-bottom">
+           <a href="https://twitter.com/IcanScriptThat/">twitter</a>
+           <a href="https://www.linkedin.com/pub/kevin-murphy/20/8b9/64b">linkedin</a>
+           <a href="https://github.com/maniacmurphy">github</a>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+</body>
+</html>
+

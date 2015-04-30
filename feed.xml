@@ -11,22 +11,67 @@
 				<description>&lt;p&gt;Before I got involved with the VMware puppet modules, I had only been using Puppet for a few months and I had only used it to manage the system the Puppet agent was running on. But the original team behind the VMware modules was trying to manage a system that didn&amp;#39;t run off local config files. They needed to hit a remote system where a local Puppet agent might not work, and so enter &amp;quot;Transports.&amp;quot; I won&amp;#39;t dive too deep into transports as there are already some posts that do that which
 I shall link below. But all the VMware modules to rely heavily on some type of transport, so I would be amiss in getting started with walking you through them without at least touching on transports.&lt;/p&gt;
 
-&lt;p&gt;So what makes a transport special? After all, I am sure that the VMware modules aren&amp;#39;t the only ones to attempt to manage a remote system via API or some other interface. An over simplication might be a logical representation of your target system, i.e hostname and credentials. In reality they are also the entity that executes your desired state.  For instance, the vCenter transport type would certainly hold the those details such as hostname and credentials, but when the provider needs
+&lt;p&gt;So what makes a transport special? After all, I am sure that the VMware modules aren&amp;#39;t the only ones to attempt to manage a remote system via API or some other interface. An over simplication might be a logical representation of your target system, i.e hostname and credentials. In reality they are also the entity that executes your desired state.  For instance, the vSphere transport type would certainly hold the those details such as hostname and credentials, but when the provider needs
 to execute a command it will pass it to the target system via the transport resource within Puppet. What this gets you is the ability to make that initial connection once, and then send all communication through that channel. Depending on the target protocol, that could save you some decent cycles. Currently the VMware modules utilize three transports which I want to introduce you to.&lt;/p&gt;
+
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
 
 &lt;h3 id=&quot;ssh-transport&quot;&gt;&lt;strong&gt;SSH Transport&lt;/strong&gt;&lt;/h3&gt;
 
-&lt;p&gt;The SSH transport is utilized by the &lt;a href=&quot;https://github.com/vmware/vmware-vcsa&quot;&gt;vmware-vcsa&lt;/a&gt;. This module is focused on getting the VMware vCenter Service Appliance bootstrapped so the services are configured and running. The view an appliance is a black box and so one shouldn&amp;#39;t count on a puppet agent running local. It is for this reason the &lt;a href=&quot;https://github.com/vmware/vmware-vcsa&quot;&gt;vmware-vcsa&lt;/a&gt; module uses the SSH transport to send commands to the remote system to bring up the vmware services. &lt;/p&gt;
+&lt;p&gt;The SSH transport is utilized by the &lt;a href=&quot;https://github.com/vmware/vmware-vcsa&quot;&gt;vmware-vcsa&lt;/a&gt; module. This module is focused on getting the VMware vCenter Service Appliance bootstrapped so the services are configured and running. The view is that an appliance is a black box and so one shouldn&amp;#39;t count on a puppet agent running local. It is for this reason the &lt;a href=&quot;https://github.com/vmware/vmware-vcsa&quot;&gt;vmware-vcsa&lt;/a&gt; module uses the SSH transport to send commands to the remote system to bring up the vmware services. &lt;/p&gt;
+
+&lt;p&gt;The options can be a hash consisting of additional command line parameters to pass to the ssh session.&lt;/p&gt;
 
 &lt;h4 id=&quot;example&quot;&gt;&lt;strong&gt;Example&lt;/strong&gt;&lt;/h4&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;   transport { &amp;#39;resourcename&amp;#39;:
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;   transport { &amp;#39;ssh&amp;#39;:
      username =&amp;gt; &amp;#39;localuser&amp;#39;,
      password =&amp;gt; &amp;#39;mypassword&amp;#39;,
      server   =&amp;gt; &amp;#39;fqdn&amp;#39;,
      # options  =&amp;gt; $ssh_options,
    }
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
-				<pubDate>Thu, 23 Apr 2015 00:00:00 -0500</pubDate>
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;vsphere-transport&quot;&gt;&lt;strong&gt;vSphere Transport&lt;/strong&gt;&lt;/h3&gt;
+
+&lt;p&gt;The vSphere trasnport is, as expected, utilized by the &lt;a href=&quot;https://github.com/vmware/vmware-vcenter&quot;&gt;vmware-vcenter&lt;/a&gt; module. This interacts with the vSphere API to configure vCenter or ESX hosts. The options here can be a hash of additional options for the connection. The example below shows setting the API revision and the insecure option to allow for self-signed certificates.&lt;/p&gt;
+
+&lt;h4 id=&quot;example&quot;&gt;&lt;strong&gt;Example&lt;/strong&gt;&lt;/h4&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;   transport { &amp;#39;vcenter&amp;#39;:
+     username =&amp;gt; &amp;#39;localuser&amp;#39;,
+     password =&amp;gt; &amp;#39;mypassword&amp;#39;,
+     server   =&amp;gt; &amp;#39;fqdn&amp;#39;,
+     options  =&amp;gt; {
+       &amp;quot;insecure&amp;quot; =&amp;gt; true,
+       &amp;quot;rev&amp;quot; =&amp;gt; &amp;quot;5.1&amp;quot;,
+     },
+   }
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;vshield-transport&quot;&gt;&lt;strong&gt;vShield Transport&lt;/strong&gt;&lt;/h3&gt;
+
+&lt;p&gt;Again, clearly the vShield transport is used by the &lt;a href=&quot;https://github.com/vmware/vmware-vshield&quot;&gt;vmware-vshield&lt;/a&gt; module and it interacts with the vShield API. This transport does not have an options parameter&lt;/p&gt;
+
+&lt;h4 id=&quot;example&quot;&gt;&lt;strong&gt;Example&lt;/strong&gt;&lt;/h4&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;   transport { &amp;#39;vshield&amp;#39;:
+     username =&amp;gt; &amp;#39;localuser&amp;#39;,
+     password =&amp;gt; &amp;#39;mypassword&amp;#39;,
+     server   =&amp;gt; &amp;#39;fqdn&amp;#39;,
+   }
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;additional-references&quot;&gt;&lt;strong&gt;Additional References&lt;/strong&gt;&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/vmware/vmware-vmware_lib/blob/master/lib/puppet_x/puppetlabs/transport/ssh.rb&quot;&gt;SSH Transport&lt;/a&gt; : Review the code for the SSH transport&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/vmware/vmware-vcenter/blob/master/lib/puppet_x/puppetlabs/transport/vsphere.rb&quot;&gt;vSphere Transport&lt;/a&gt; : Review the code for the vSphere transport&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/vmware/vmware-vshield/blob/master/lib/puppet_x/puppetlabs/transport/vshield.rb&quot;&gt;vShield Transport&lt;/a&gt; : Review the code for the vShield transport&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;http://www.nanliu.me/blog/2013/02/27/puppet-managing-vcenter-and-vshield&quot;&gt;Nan Liu&lt;/a&gt; : See Nan Liu&amp;#39;s original post on these modules and their transports&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+				<pubDate>Wed, 29 Apr 2015 00:00:00 -0500</pubDate>
 				<link>/2015/04/Transports</link>
 				<guid isPermaLink="true">http://practical-automation.com/2015/04/Transports</guid>
 			</item>
