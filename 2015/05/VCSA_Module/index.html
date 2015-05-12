@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Practical Automation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/theme.css" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="http://practical-automation.com/">Practical Automation</a>
+              </div>
+              <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="http://practical-automation.com/">Home</a></li>
+                    <li class="active"><a href="http://practical-automation.com/archive.html">Archive</a></li>
+                    <li class="active"><a href="http://practical-automation.com/about.html">About</a></li>
+                    <li class="active"><a href="http://practical-automation.com/feed.xml">RSS</a></li>
+                </ul>
+              </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container container-left">
+    <div class="row">
+        <div class="col-md-3 hidden-xs">
+            <div class="sidebar well">
+    <h1>Recent Posts</h1>
+    <ul>
+        
+          <li><a href="http://practical-automation.com/2015/05/VCSA_Module">VCSA Module</a></li>
+        
+          <li><a href="http://practical-automation.com/2015/04/Transports">Transports</a></li>
+        
+          <li><a href="http://practical-automation.com/2015/04/Introduction">Introduction</a></li>
+        
+    </ul>
+</div>
+
+<div class="sidebar well">
+    <h1>Categories</h1>
+        <a href="/tag/transports.html" class="set-1">transports</a> <a href="/tag/vcenter.html" class="set-1">vcenter</a> <a href="/tag/vcsa.html" class="set-5">vcsa</a> <a href="/tag/vshield.html" class="set-1">vshield</a>
+</div>
+
+        </div>
+        <div class="col-md-9">
+          <div class="article">
+            <div>
+                <h1>VCSA Module</h1>
+                <h6 >May 11, 2015</h6>
+            
+            <div class="post-content">
+            <p>The <a href="https://github.com/vmware/vmware-vcsa">vmware-vcsa</a> module is centered around the initial configuration of the vCenter Server Appliance. The appliance itself comes with everything installed but there is some initial configuration before the vCenter is 100% up.</p>
+
+<p>Note: The <a href="https://github.com/vmware/vmware-vcsa">vmware-vcsa</a> module currently only supports the 5.x versions of the VCSA. I am pretty sure the changes to the 6.0 VCSA module break some of these, but we will have to fix that soon so stay tuned.</p>
+
+<h3 id="getting-started"><strong>Getting started</strong></h3>
+
+<p>All these resources use the SSH transport previously discussed. Any manifest using these resources should start with creating the transport</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">transport { ‘ssh’ :
+  username =&gt; ‘root’,
+  password =&gt; ‘temppassword’,
+  server   =&gt; ‘192.168.1.101’,
+}
+</code></pre></div>
+<h3 id="vcsa_eula"><strong>vcsa_eula</strong></h3>
+
+<p>Clearly this is used to accept the EULA for the appliance</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">vcsa_eula { ‘accept’ :
+  ensure    =&gt; accept,
+  transport =&gt; Transport[‘ssh’],
+}
+</code></pre></div>
+<h3 id="vcsa_db"><strong>vcsa_db</strong></h3>
+
+<p>The vcsa_db resource sets the vCenter database settings. I am betting most appliances out there are just running embedded databases which is pretty simple.</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">vcsa_db { ‘embedded_db’ :
+  ensure    =&gt; present,
+  type      =&gt; ‘embedded’,
+  transport =&gt; Transport[‘ssh’],
+}
+</code></pre></div>
+<p>I hope you are running an embedded database because while the type allows values ‘oracle’ and ‘PostgreSQL’ the provider doesn’t actually use the additional parameters that would be required to connect to a remote database. I hope we fix this as we retrofit the module for the 6.0 appliance but if you would like this feature I would encourage you to open an issue on GitHub.</p>
+
+<h3 id="vcsa_java"><strong>vcsa_java</strong></h3>
+
+<p>The vcsa_java resource is used to set the javaheap settings for the tomcat, inventory and SPS services. You should make sure to include all three because the command line tool uses them serially.</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">vcsa_java { ‘settings’ :
+  ensure     =&gt; present,
+  inventory  =&gt; 2048,
+  sps        =&gt; 512,
+  tomcat     =&gt; 1024,
+  transport  =&gt; Transport[‘ssh’],
+}
+</code></pre></div>
+<h3 id="vcsa_sso"><strong>vcsa_sso</strong></h3>
+
+<p>The vcsa_sso resource configures where the SSO service will live and it was recently extended to support external SSO services.</p>
+
+<p>For a simple embedded SSO server:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">vcsa_sso { ‘sso’ :
+  ensure      =&gt; present,
+  dbtype      =&gt; ‘embedded’,
+  transport   =&gt; Transport[‘ssh’],
+}
+</code></pre></div>
+<p>Optionally when configuring a local SSO server you can use the password parameter to change the default password for <a href="mailto:administrator@vsphere.local">administrator@vsphere.local</a></p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">vcsa_sso { ‘sso’ :
+  ensure     =&gt; present,
+  dbtype     =&gt; ‘embedded’,
+  password   =&gt; ‘newpassword’,
+  transport  =&gt; Transport[‘ssh’],
+}
+</code></pre></div>
+<p>Or for a connecting to an external SSO server:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">vcsa_sso { ‘sso’ :
+  ensure      =&gt; present,
+  dbtype      =&gt; ‘external’,
+  ls          =&gt; ‘https://&lt;fqdn&gt;:7444/lookupservice/sdk’,
+  login       =&gt; ‘administrator@vsphere.local’,
+  password    =&gt; ‘mypassword’,
+  principal   =&gt; ‘root@localos’, # This is the user or group that will be assigned as the vCenter admin
+  is_group    =&gt; false,          # True if the ‘principal’ is set to a user account
+  thumbprint  =&gt; &#39;12 34 56 A5 5B 56 E1 4F 3C 6C D5 D0 78 90 D1 29’, # This can be set ‘insecure’ if you want to use an untrusted sort
+  transport   =&gt; Transport[‘ssh’],
+}
+</code></pre></div>
+<h3 id="vcsa_services"><strong>vcsa_services</strong></h3>
+
+<p>The vcsa_services resource starts all the services.</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">vcsa_services { ‘start_services’ :
+  ensure     =&gt; present,        # Alternatively this can be set to &#39;running&#39;
+  Transport  =&gt; Transport[‘ssh’],
+}
+</code></pre></div>
+<h3 id="wrap-up"><strong>Wrap Up</strong></h3>
+
+<p>All these resources are centered around the vpxd_servicecfg command line utility. If you want to know more about what can be substituted into each parameter feel free to run  <em>vpxd_servicecfg -h</em> on your VCSA and see the detailed documentation around how to use the utility.</p>
+
+            </div>
+            
+            </div>
+          </div>
+          <div class="pagination">
+              
+              
+                <a class="btn btn-default" href="http://practical-automation.com/2015/04/Transports" class="previous">Older Post</a>
+              
+</div>
+
+        </div>
+    </div>
+</div>
+
+
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12 footer navbar-inverse navbar-fixed-bottom">
+           <a href="https://twitter.com/IcanScriptThat/">twitter</a>
+           <a href="https://www.linkedin.com/pub/kevin-murphy/20/8b9/64b">linkedin</a>
+           <a href="https://github.com/maniacmurphy">github</a>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+</body>
+</html>
+

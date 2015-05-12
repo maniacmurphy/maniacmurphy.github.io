@@ -7,6 +7,100 @@
 		<atom:link href="http://practical-automation.com/feed.xml" rel="self" type="application/rss+xml" />
 		
 			<item>
+				<title>VCSA Module</title>
+				<description>&lt;p&gt;The &lt;a href=&quot;https://github.com/vmware/vmware-vcsa&quot;&gt;vmware-vcsa&lt;/a&gt; module is centered around the initial configuration of the vCenter Server Appliance. The appliance itself comes with everything installed but there is some initial configuration before the vCenter is 100% up.&lt;/p&gt;
+
+&lt;p&gt;Note: The &lt;a href=&quot;https://github.com/vmware/vmware-vcsa&quot;&gt;vmware-vcsa&lt;/a&gt; module currently only supports the 5.x versions of the VCSA. I am pretty sure the changes to the 6.0 VCSA module break some of these, but we will have to fix that soon so stay tuned.&lt;/p&gt;
+
+&lt;h3 id=&quot;getting-started&quot;&gt;&lt;strong&gt;Getting started&lt;/strong&gt;&lt;/h3&gt;
+
+&lt;p&gt;All these resources use the SSH transport previously discussed. Any manifest using these resources should start with creating the transport&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;transport { ‘ssh’ :
+  username =&amp;gt; ‘root’,
+  password =&amp;gt; ‘temppassword’,
+  server   =&amp;gt; ‘192.168.1.101’,
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h3 id=&quot;vcsa_eula&quot;&gt;&lt;strong&gt;vcsa_eula&lt;/strong&gt;&lt;/h3&gt;
+
+&lt;p&gt;Clearly this is used to accept the EULA for the appliance&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;vcsa_eula { ‘accept’ :
+  ensure    =&amp;gt; accept,
+  transport =&amp;gt; Transport[‘ssh’],
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h3 id=&quot;vcsa_db&quot;&gt;&lt;strong&gt;vcsa_db&lt;/strong&gt;&lt;/h3&gt;
+
+&lt;p&gt;The vcsa_db resource sets the vCenter database settings. I am betting most appliances out there are just running embedded databases which is pretty simple.&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;vcsa_db { ‘embedded_db’ :
+  ensure    =&amp;gt; present,
+  type      =&amp;gt; ‘embedded’,
+  transport =&amp;gt; Transport[‘ssh’],
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;I hope you are running an embedded database because while the type allows values ‘oracle’ and ‘PostgreSQL’ the provider doesn’t actually use the additional parameters that would be required to connect to a remote database. I hope we fix this as we retrofit the module for the 6.0 appliance but if you would like this feature I would encourage you to open an issue on GitHub.&lt;/p&gt;
+
+&lt;h3 id=&quot;vcsa_java&quot;&gt;&lt;strong&gt;vcsa_java&lt;/strong&gt;&lt;/h3&gt;
+
+&lt;p&gt;The vcsa_java resource is used to set the javaheap settings for the tomcat, inventory and SPS services. You should make sure to include all three because the command line tool uses them serially.&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;vcsa_java { ‘settings’ :
+  ensure     =&amp;gt; present,
+  inventory  =&amp;gt; 2048,
+  sps        =&amp;gt; 512,
+  tomcat     =&amp;gt; 1024,
+  transport  =&amp;gt; Transport[‘ssh’],
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h3 id=&quot;vcsa_sso&quot;&gt;&lt;strong&gt;vcsa_sso&lt;/strong&gt;&lt;/h3&gt;
+
+&lt;p&gt;The vcsa_sso resource configures where the SSO service will live and it was recently extended to support external SSO services.&lt;/p&gt;
+
+&lt;p&gt;For a simple embedded SSO server:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;vcsa_sso { ‘sso’ :
+  ensure      =&amp;gt; present,
+  dbtype      =&amp;gt; ‘embedded’,
+  transport   =&amp;gt; Transport[‘ssh’],
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Optionally when configuring a local SSO server you can use the password parameter to change the default password for &lt;a href=&quot;mailto:administrator@vsphere.local&quot;&gt;administrator@vsphere.local&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;vcsa_sso { ‘sso’ :
+  ensure     =&amp;gt; present,
+  dbtype     =&amp;gt; ‘embedded’,
+  password   =&amp;gt; ‘newpassword’,
+  transport  =&amp;gt; Transport[‘ssh’],
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Or for a connecting to an external SSO server:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;vcsa_sso { ‘sso’ :
+  ensure      =&amp;gt; present,
+  dbtype      =&amp;gt; ‘external’,
+  ls          =&amp;gt; ‘https://&amp;lt;fqdn&amp;gt;:7444/lookupservice/sdk’,
+  login       =&amp;gt; ‘administrator@vsphere.local’,
+  password    =&amp;gt; ‘mypassword’,
+  principal   =&amp;gt; ‘root@localos’, # This is the user or group that will be assigned as the vCenter admin
+  is_group    =&amp;gt; false,          # True if the ‘principal’ is set to a user account
+  thumbprint  =&amp;gt; &amp;#39;12 34 56 A5 5B 56 E1 4F 3C 6C D5 D0 78 90 D1 29’, # This can be set ‘insecure’ if you want to use an untrusted sort
+  transport   =&amp;gt; Transport[‘ssh’],
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h3 id=&quot;vcsa_services&quot;&gt;&lt;strong&gt;vcsa_services&lt;/strong&gt;&lt;/h3&gt;
+
+&lt;p&gt;The vcsa_services resource starts all the services.&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;vcsa_services { ‘start_services’ :
+  ensure     =&amp;gt; present,        # Alternatively this can be set to &amp;#39;running&amp;#39;
+  Transport  =&amp;gt; Transport[‘ssh’],
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h3 id=&quot;wrap-up&quot;&gt;&lt;strong&gt;Wrap Up&lt;/strong&gt;&lt;/h3&gt;
+
+&lt;p&gt;All these resources are centered around the vpxd_servicecfg command line utility. If you want to know more about what can be substituted into each parameter feel free to run  &lt;em&gt;vpxd_servicecfg -h&lt;/em&gt; on your VCSA and see the detailed documentation around how to use the utility.&lt;/p&gt;
+</description>
+				<pubDate>Mon, 11 May 2015 00:00:00 -0500</pubDate>
+				<link>/2015/05/VCSA_Module</link>
+				<guid isPermaLink="true">http://practical-automation.com/2015/05/VCSA_Module</guid>
+			</item>
+		
+			<item>
 				<title>Transports</title>
 				<description>&lt;p&gt;Before I got involved with the VMware puppet modules, I had only been using Puppet for a few months and I had only used it to manage the system the Puppet agent was running on. But the original team behind the VMware modules was trying to manage a system that didn&amp;#39;t run off local config files. They needed to hit a remote system where a local Puppet agent might not work, and so enter &amp;quot;Transports.&amp;quot; I won&amp;#39;t dive too deep into transports as there are already some posts that do that which
 I shall link below. But all the VMware modules to rely heavily on some type of transport, so I would be amiss in getting started with walking you through them without at least touching on transports.&lt;/p&gt;

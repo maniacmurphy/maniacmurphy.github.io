@@ -45,6 +45,8 @@
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="http://practical-automation.com/2015/05/VCSA_Module">VCSA Module</a></li>
+        
           <li><a href="http://practical-automation.com/2015/04/Transports">Transports</a></li>
         
           <li><a href="http://practical-automation.com/2015/04/Introduction">Introduction</a></li>
@@ -54,12 +56,24 @@
 
 <div class="sidebar well">
     <h1>Categories</h1>
-        <a href="/tag/transports.html" class="set-5">transports</a> <a href="/tag/vcenter.html" class="set-5">vcenter</a> <a href="/tag/vcsa.html" class="set-5">vcsa</a> <a href="/tag/vshield.html" class="set-5">vshield</a>
+        <a href="/tag/transports.html" class="set-1">transports</a> <a href="/tag/vcenter.html" class="set-1">vcenter</a> <a href="/tag/vcsa.html" class="set-5">vcsa</a> <a href="/tag/vshield.html" class="set-1">vshield</a>
 </div>
 
         </div>
         <div class="col-md-9">
             
+<div class="article">
+    <div class="well">
+        <h1><a href="http://practical-automation.com/2015/05/VCSA_Module">VCSA Module</a></h1>
+        <h2>May 11, 2015</h2>
+        
+        <div class="content">
+             The vmware-vcsa module is centered around the initial configuration of the vCenter Server Appliance. The appliance itself comes with everything installed but there is some initial configuration before the vCenter is 100% up. Note: The vmware-vcsa module currently only supports the 5.x versions of the VCSA. I am pretty sure the changes to the 6.0 VCSA module break some of these, but we will have to fix that soon so stay tuned. Getting started All these resources use the SSH transport previously discussed. Any manifest using these resources should start with creating the transport transport { ‘ssh’ : username =&gt; ‘root’, password =&gt; ‘temppassword’, server =&gt; ‘192.168.1.101’, } vcsa_eula Clearly this is used to accept the EULA for the appliance vcsa_eula { ‘accept’ : ensure =&gt; accept, transport =&gt; Transport[‘ssh’], } vcsa_db The vcsa_db resource sets the vCenter database settings. I am betting most appliances out there are just running embedded databases which is pretty simple. vcsa_db { ‘embedded_db’ : ensure =&gt; present, type =&gt; ‘embedded’, transport =&gt; Transport[‘ssh’], } I hope you are running an embedded database because while the type allows values ‘oracle’ and ‘PostgreSQL’ the provider doesn’t actually use the additional parameters that would be required to...
+             <br><a href="http://practical-automation.com/2015/05/VCSA_Module">Read more...</a>
+        </div>
+    </div>
+</div>
+
 <div class="article">
     <div class="well">
         <h1><a href="http://practical-automation.com/2015/04/Transports">Transports</a></h1>
