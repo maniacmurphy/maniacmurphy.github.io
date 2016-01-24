@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Practical Automation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/theme.css" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="http://practical-automation.com/">Practical Automation</a>
+              </div>
+              <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="http://practical-automation.com/">Home</a></li>
+                    <li class="active"><a href="http://practical-automation.com/archive.html">Archive</a></li>
+                    <li class="active"><a href="http://practical-automation.com/about.html">About</a></li>
+                    <li class="active"><a href="http://practical-automation.com/feed.xml">RSS</a></li>
+                </ul>
+              </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container container-left">
+    <div class="row">
+        <div class="col-md-3 hidden-xs">
+            <div class="sidebar well">
+    <h1>Recent Posts</h1>
+    <ul>
+        
+          <li><a href="http://practical-automation.com/2016/01/Maturing_Automation_Part1">Maturing Automation Part 1 - Scripting</a></li>
+        
+          <li><a href="http://practical-automation.com/2016/01/A_New_year">A New Year, A New Style</a></li>
+        
+          <li><a href="http://practical-automation.com/2015/05/VCSA_Module">VCSA Module</a></li>
+        
+          <li><a href="http://practical-automation.com/2015/04/Transports">Transports</a></li>
+        
+          <li><a href="http://practical-automation.com/2015/04/Introduction">Introduction</a></li>
+        
+    </ul>
+</div>
+
+<div class="sidebar well">
+    <h1>Categories</h1>
+        <a href="/tag/editorial.html" class="set-5">editorial</a> <a href="/tag/transports.html" class="set-1">transports</a> <a href="/tag/vcenter.html" class="set-1">vcenter</a> <a href="/tag/vcsa.html" class="set-5">vcsa</a> <a href="/tag/vshield.html" class="set-1">vshield</a>
+</div>
+
+        </div>
+        <div class="col-md-9">
+          <div class="article">
+            <div>
+                <h1>Maturing Automation Part 1 - Scripting</h1>
+                <h6 >Jan 23, 2016</h6>
+            
+            <div class="post-content">
+            <p>Automation is one of those fun words. It&#39;s one of those things every one wants but no one ever sits down and defines what that means to them. Over my career my understanding of it has changed. When I was first starting out I didn&#39;t really view my one off scripts as &quot;automation&quot;. That word was reserved for fully developed applications not the boot script I used to map printers on branch PCs. Now a days I see automation as the umbrella, much like a DBA and an
+Info Sec analyst both work under the IT umbrella. Around the office, I often hear &quot;automation&quot; as &quot;deployment automation&quot;. In a large scaling business, most people drift to the concerns of deployment time work. Last year I started a mission to correct that. Any time I heard some one refer to what I do as &quot;deployment automation&quot;, I would give a little rant about how the focus on deployment was all wrong. This is because deployment is only the beginning of this system&#39;s lifecycle and frankly is the easiest part of automation. But merely automating deploying of an application stack or toolset
+doesn&#39;t begin to tame the chaos that is Operations. Enter the first stage in maturing automation, scripting.</p>
+
+<p>Scripts are simultanously the best and worst tool in an Engineer&#39;s toolbox. The benefits are obvious, there are a plethera of languages out there that make scripting easy, they reduce manual efforts, and they enable operators to take some control over their daily tasks. They also provide a seemingly fast turn around. A manager needs something done, he just turns to his top Engineer and says give me a fast script. It is loved becauase there is no need to include an outside team. No need to talk to
+those dreaded developers that just don&#39;t get operational pains. I believe the pains that make them the worst tool are more hidden.</p>
+
+<p>First, lets ask why are the seemingly a faster turn around. One way I have seen is because the person is developing the script as he completes the work. So work is getting done as the script grows. Also, there is no need for gathering requirements or communicating needs to another developer. The engineer creating his script is also the subject matter expert, so no need for cross team communication. I say these things are hidden because since a script is usually developed and used with in a team, the growth pains of catching and resolving bugs are all internal, unlike when a team is asked to use another team&#39;s tool. The then simple hiccups caught and resolved by the engineer running the script change to the nasty bug that the absent minded developer put in my way.</p>
+
+<p>Next, I rarely see production scripts controlled under code management and if they are it isn&#39;t a group repo but someone&#39;s private repo that they may have shared to a few collegues but probably isn&#39;t well know for any one to contribute back to or get the latest updates. If that is the case, controlling what version is being used on which system is harder and therefore a chance to introduce inconsistencies into your environment.</p>
+
+<p>Speaking of inconsitencies, I claim scripts also have just as much chance to increase inconsistencies as they do to reduce them. Have you ever seen a build process that
+is, run scripts A, B, C and D. Do you think those scripts were developed and maintained together, or is it more that they were created organically as engineers and systems grew? What if script A from 5 years ago set a simple setting to one thing and then the newer script D, which was developed by a completely different team than the 5 year old team, sets it to another. What happens if the implementor ran them in the wrong order, or forgot to run the last one? Scripts provide false security, but
+hey you can already right another validation script to catch that right?</p>
+
+<p>Neither are they regularly maintained. By maintenance, I mean tested as part of a system upgrade or release
+processes to make sure that the new system doesn&#39;t break them, or worse, they break the new system. They don&#39;t grow with the system. If Engineer A likes python and wrote a script to complete a daily task, then left the company and his replacement is more comfortable with java then rather than extending the script they completely redo the script as a java tool and then add the new instruction set.  </p>
+
+<p>These things aren&#39;t horrible, but they are hidden. It is easier for us to forgive our own mistakes or burdens we put on ourselves than those we see put onto us by others. It is just easier to assume neglect or ignorance on others than assuming that person had the best of intentions to make our lives easier but lacked critical knowledge or just didn&#39;t share the same experience as ourselves. That is the horrible part. That is what breaks communication chains between teams and degrades operational stability and ultimately increases choas in production. Always assume
+positive intent. Always try to build up relations with teams rather than tear them down in an act of frustration.</p>
+
+            </div>
+            
+            </div>
+          </div>
+          <div class="pagination">
+              
+              
+                <a class="btn btn-default" href="http://practical-automation.com/2016/01/A_New_year" class="previous">Older Post</a>
+              
+</div>
+
+        </div>
+    </div>
+</div>
+
+
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12 footer navbar-inverse navbar-fixed-bottom">
+           <a href="https://twitter.com/IcanScriptThat/">twitter</a>
+           <a href="https://www.linkedin.com/pub/kevin-murphy/20/8b9/64b">linkedin</a>
+           <a href="https://github.com/maniacmurphy">github</a>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+</body>
+</html>
+

@@ -7,6 +7,44 @@
 		<atom:link href="http://practical-automation.com/feed.xml" rel="self" type="application/rss+xml" />
 		
 			<item>
+				<title>Maturing Automation Part 1 - Scripting</title>
+				<description>&lt;p&gt;Automation is one of those fun words. It&amp;#39;s one of those things every one wants but no one ever sits down and defines what that means to them. Over my career my understanding of it has changed. When I was first starting out I didn&amp;#39;t really view my one off scripts as &amp;quot;automation&amp;quot;. That word was reserved for fully developed applications not the boot script I used to map printers on branch PCs. Now a days I see automation as the umbrella, much like a DBA and an
+Info Sec analyst both work under the IT umbrella. Around the office, I often hear &amp;quot;automation&amp;quot; as &amp;quot;deployment automation&amp;quot;. In a large scaling business, most people drift to the concerns of deployment time work. Last year I started a mission to correct that. Any time I heard some one refer to what I do as &amp;quot;deployment automation&amp;quot;, I would give a little rant about how the focus on deployment was all wrong. This is because deployment is only the beginning of this system&amp;#39;s lifecycle and frankly is the easiest part of automation. But merely automating deploying of an application stack or toolset
+doesn&amp;#39;t begin to tame the chaos that is Operations. Enter the first stage in maturing automation, scripting.&lt;/p&gt;
+
+&lt;p&gt;Scripts are simultanously the best and worst tool in an Engineer&amp;#39;s toolbox. The benefits are obvious, there are a plethera of languages out there that make scripting easy, they reduce manual efforts, and they enable operators to take some control over their daily tasks. They also provide a seemingly fast turn around. A manager needs something done, he just turns to his top Engineer and says give me a fast script. It is loved becauase there is no need to include an outside team. No need to talk to
+those dreaded developers that just don&amp;#39;t get operational pains. I believe the pains that make them the worst tool are more hidden.&lt;/p&gt;
+
+&lt;p&gt;First, lets ask why are the seemingly a faster turn around. One way I have seen is because the person is developing the script as he completes the work. So work is getting done as the script grows. Also, there is no need for gathering requirements or communicating needs to another developer. The engineer creating his script is also the subject matter expert, so no need for cross team communication. I say these things are hidden because since a script is usually developed and used with in a team, the growth pains of catching and resolving bugs are all internal, unlike when a team is asked to use another team&amp;#39;s tool. The then simple hiccups caught and resolved by the engineer running the script change to the nasty bug that the absent minded developer put in my way.&lt;/p&gt;
+
+&lt;p&gt;Next, I rarely see production scripts controlled under code management and if they are it isn&amp;#39;t a group repo but someone&amp;#39;s private repo that they may have shared to a few collegues but probably isn&amp;#39;t well know for any one to contribute back to or get the latest updates. If that is the case, controlling what version is being used on which system is harder and therefore a chance to introduce inconsistencies into your environment.&lt;/p&gt;
+
+&lt;p&gt;Speaking of inconsitencies, I claim scripts also have just as much chance to increase inconsistencies as they do to reduce them. Have you ever seen a build process that
+is, run scripts A, B, C and D. Do you think those scripts were developed and maintained together, or is it more that they were created organically as engineers and systems grew? What if script A from 5 years ago set a simple setting to one thing and then the newer script D, which was developed by a completely different team than the 5 year old team, sets it to another. What happens if the implementor ran them in the wrong order, or forgot to run the last one? Scripts provide false security, but
+hey you can already right another validation script to catch that right?&lt;/p&gt;
+
+&lt;p&gt;Neither are they regularly maintained. By maintenance, I mean tested as part of a system upgrade or release
+processes to make sure that the new system doesn&amp;#39;t break them, or worse, they break the new system. They don&amp;#39;t grow with the system. If Engineer A likes python and wrote a script to complete a daily task, then left the company and his replacement is more comfortable with java then rather than extending the script they completely redo the script as a java tool and then add the new instruction set.  &lt;/p&gt;
+
+&lt;p&gt;These things aren&amp;#39;t horrible, but they are hidden. It is easier for us to forgive our own mistakes or burdens we put on ourselves than those we see put onto us by others. It is just easier to assume neglect or ignorance on others than assuming that person had the best of intentions to make our lives easier but lacked critical knowledge or just didn&amp;#39;t share the same experience as ourselves. That is the horrible part. That is what breaks communication chains between teams and degrades operational stability and ultimately increases choas in production. Always assume
+positive intent. Always try to build up relations with teams rather than tear them down in an act of frustration.&lt;/p&gt;
+</description>
+				<pubDate>Sat, 23 Jan 2016 00:00:00 -0600</pubDate>
+				<link>/2016/01/Maturing_Automation_Part1</link>
+				<guid isPermaLink="true">http://practical-automation.com/2016/01/Maturing_Automation_Part1</guid>
+			</item>
+		
+			<item>
+				<title>A New Year, A New Style</title>
+				<description>&lt;p&gt;I started this blog early last year, in a hope to make up for what I saw as a lack of public documentation around the VMware Puppet modules. For a number of years, I have enjoyed working with VMware products and when I was introduced to Puppet a few years ago I became equally fascinated. So the VMware modules are a great convergence of these interest, however, I feel it is hard for people not familiar with the vSphere APIs to get a lot out of them. The natural place to start seemed to discuss
+&lt;a href=&quot;http://practical-automation.com/2015/04/Transports&quot;&gt;Transports&lt;/a&gt; since all the resources rely on them. Then was my post on the &lt;a href=&quot;https://github.com/vmware/vmware-vcsa&quot;&gt;vmware-vcsa&lt;/a&gt; module since it boot straps the VCSA and is a smaller module. After that things got fuzzy, and I lost focus. Honestly, I might have lost a bit of interest in documenting manifests. So in 2016 I plan on mixing it up a bit. I hope to get more involved in the community in order to understand if people have a desire to use these modules and if so what they find as a hinderance. I plan on including some editorials and expand to some other work I hope to be doing in some free time.&amp;#39;&lt;/p&gt;
+</description>
+				<pubDate>Fri, 22 Jan 2016 00:00:00 -0600</pubDate>
+				<link>/2016/01/A_New_year</link>
+				<guid isPermaLink="true">http://practical-automation.com/2016/01/A_New_year</guid>
+			</item>
+		
+			<item>
 				<title>VCSA Module</title>
 				<description>&lt;p&gt;The &lt;a href=&quot;https://github.com/vmware/vmware-vcsa&quot;&gt;vmware-vcsa&lt;/a&gt; module is centered around the initial configuration of the vCenter Server Appliance. The appliance itself comes with everything installed but there is some initial configuration before the vCenter is 100% up.&lt;/p&gt;
 
